@@ -1,10 +1,5 @@
-from flask import Flask, render_template, request, redirect, url_for
+from flask import Flask, render_template, request, redirect, url_for, session
 import numpy as np
-
-app = Flask(__name__)
-
-message_log = []
-name = ""
 
 
 def rundom_message():
@@ -14,6 +9,9 @@ def rundom_message():
         "ぷえええ",
     ]
     return np.random.choice(messages)
+
+
+app = Flask(__name__)
 
 
 @app.route('/')
@@ -27,12 +25,12 @@ def index():
 
 @app.route('/post', methods=['GET', 'POST'])
 def post():
-    global name, message_log
     if request.method == 'POST':
         name = request.form['name']
         if name == "":
             name = "名無し"
-        message_log = [
+        session['name'] = name
+        session['message_log'] = [
             {"author": "Koshikawa", "content": f"こんにちは {name} さん"},
             {"author": "Koshikawa", "content": "僕の名前はこしかわだよ!"},
         ]
@@ -45,17 +43,17 @@ def post():
 def chat():
     title = "Chat"
     return render_template(f"chat.html",
-                           name=name,
-                           messages=message_log,
+                           name=session['name'],
+                           messages=session['message_log'],
                            title=title)
 
 
 @app.route('/message_post', methods=['GET', 'POST'])
 def message_post():
-    global message_log
     if request.method == 'POST':
         message = request.form['message']
-        author = name
+        author = session['name']
+        message_log = session['message_log']
         message_log.append({  # postされたメッセージをログへ追加
             "author": author,
             "content": message
@@ -64,11 +62,13 @@ def message_post():
             "author": "Koshikawa",
             "content": rundom_message()
              })
+        session['message_log'] = message_log
         return redirect(url_for('chat'))
     else:
         return redirect(url_for('index'))
 
 
 if __name__ == '__main__':
-    # app.debug = True  # 本番環境ではコメントアウトする
+    app.debug = True  # 本番環境ではコメントアウトする
+    app.secret_key = 'xhsaifilsasd;f'
     app.run(host='0.0.0.0')
