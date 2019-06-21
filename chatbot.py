@@ -12,6 +12,7 @@ def rundom_message():
 
 
 app = Flask(__name__)
+app.secret_key = 'osdhfdskldjfdsjfdsljfds'
 
 
 @app.route('/')
@@ -70,5 +71,4 @@ def message_post():
 
 if __name__ == '__main__':
     # app.debug = True  # 本番環境ではコメントアウトする
-    app.secret_key = ''
     app.run(host='0.0.0.0')
