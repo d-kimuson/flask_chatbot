@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block content %}
+{% if name %}
+    <p>こんにちは {{ name }} さん</p>
+    <p>僕の名前はこしかわだよ!</p>
+    {% for message_token in message %}
+        <p>{{ message_token.author }}: {{ message_token.content }}</p>
+    {% endfor %}
+    <form action="/message_post" method="post" class="form-inline">
+        <label for="message">メッセージ</label>
+        <input type="text" class="form-control" id="message" name="message" placeholder="おはよう">
+        <button type="submit" class="btn btn-default">送信する</button>
+    </form>
+{% else %}
+    {{ message }}
+    <form action="/post" method="post" class="form-inline">
+        <label for="name">名前</label>
+        <input type="text" class="form-control" id="name" name="name" placeholder="Name">
+        <button type="submit" class="btn btn-default">送信する</button>
+    </form>
+{% endif %}
+{% endblock %}
