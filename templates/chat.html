@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="chat">
+    {% for message_token in messages %}
+        <p class="message_set">
+            <span class="author">{{ message_token.author }}</span>
+            <span class="message">{{ message_token.content }}</span>
+        </p>
+    {% endfor %}
+</div>
+<form action="/message_post" method="post" class="form-inline">
+    <label for="message">メッセージ</label>
+    <input type="text" class="form-control" id="message" name="message" placeholder="おはよう">
+    <button type="submit" class="btn btn-primary">送信する</button>
+</form>
+{% endblock %}
