@@ -70,5 +70,5 @@ def message_post():
 
 
 if __name__ == '__main__':
-    app.debug = True
+    # app.debug = True  # 本番環境ではコメントアウトする
     app.run(host='0.0.0.0')
