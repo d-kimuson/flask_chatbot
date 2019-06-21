@@ -1,0 +1,37 @@
+.chat {
+    /* width: 400px; */
+    background-color: rgb(224, 255, 252);
+    border-radius: 10px;
+    border: solid 2px black;
+    padding: 30px;
+    margin: 20px;
+}
+
+.message {
+    background-color: white;
+    border-radius: 15px;
+    padding: 10px;
+    padding-right: 40px;
+}
+
+.author {
+    display: inline-block;
+    width: 100px;
+    background-color: rgb(150, 139, 203);
+    border-radius: 20px;
+    padding: 10px;
+    color: yellow;
+}
+
+.message_set {
+    height: 40px;
+    margin: 5px 2px;
+}
+
+label, input {
+    margin: 5px 10px;
+}
+
+.nav {
+    margin: 20px 0px 5px 20px;
+}
