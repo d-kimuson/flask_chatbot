@@ -3,12 +3,12 @@ import numpy as np
 
 app = Flask(__name__)
 
-message_logs = []
+message_log = []
 name = ""
 
 
 def rundom_message():
-    messages = [
+    messages = [  # 返信用メッセージリスト
         "うぇーい",
         "ひょええ",
         "ぷえええ",
@@ -45,13 +45,13 @@ def message_post():
     if request.method == 'POST':
         message = request.form['message']
         author = name
-        message_log.append({
+        message_log.append({  # postされたメッセージをログへ追加
             "author": author,
             "content": message
             })
-        message_log.append(
-            {"author": "Koshikawa",
-             "content": rundom_message()
+        message_log.append({  # メッセージへの返信をログへ追加
+            "author": "Koshikawa",
+            "content": rundom_message()
              })
         return render_template(f"index.html",
                                name=name,
@@ -63,4 +63,5 @@ def message_post():
 
 if __name__ == '__main__':
     app.debug = True
-    app.run(host='0.0.0.0')
+    app.run()
+    # app.run(host='0.0.0.0')
