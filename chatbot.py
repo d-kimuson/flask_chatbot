@@ -69,6 +69,6 @@ def message_post():
 
 
 if __name__ == '__main__':
-    app.debug = True  # 本番環境ではコメントアウトする
+    # app.debug = True  # 本番環境ではコメントアウトする
     app.secret_key = 'xhsaifilsasd;f'
     app.run(host='0.0.0.0')
