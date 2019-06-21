@@ -8,7 +8,7 @@ name = ""
 
 
 def rundom_message():
-    messages = [  # 返信用メッセージリスト
+    messages = [  # 返信用
         "うぇーい",
         "ひょええ",
         "ぷえええ",
@@ -27,21 +27,32 @@ def index():
 
 @app.route('/post', methods=['GET', 'POST'])
 def post():
-    global name
-    title = "こんにちは"
+    global name, message_log
     if request.method == 'POST':
         name = request.form['name']
-        return render_template(f"index.html",
-                               name=name,
-                               title=title)
+        if name == "":
+            name = "名無し"
+        message_log = [
+            {"author": "Koshikawa", "content": f"こんにちは {name} さん"},
+            {"author": "Koshikawa", "content": "僕の名前はこしかわだよ!"},
+        ]
+        return redirect(url_for('chat'))
     else:
         return redirect(url_for('index'))
+
+
+@app.route('/chat/')
+def chat():
+    title = "Chat"
+    return render_template(f"chat.html",
+                           name=name,
+                           messages=message_log,
+                           title=title)
 
 
 @app.route('/message_post', methods=['GET', 'POST'])
 def message_post():
     global message_log
-    title = "こんにちは"
     if request.method == 'POST':
         message = request.form['message']
         author = name
@@ -53,15 +64,11 @@ def message_post():
             "author": "Koshikawa",
             "content": rundom_message()
              })
-        return render_template(f"index.html",
-                               name=name,
-                               message=message_log,
-                               title=title)
+        return redirect(url_for('chat'))
     else:
         return redirect(url_for('index'))
 
 
 if __name__ == '__main__':
     app.debug = True
-    app.run()
-    # app.run(host='0.0.0.0')
+    app.run(host='0.0.0.0')
