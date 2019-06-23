@@ -12,7 +12,7 @@ def rundom_message():
 
 
 app = Flask(__name__)
-app.secret_key = 'osdhfdskldjfdsjfdsljfds'
+app.secret_key = 'hoigeowooa'
 
 
 @app.route('/')
