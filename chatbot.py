@@ -156,5 +156,5 @@ def update_state(session, is_login, mail=None):
 
 
 if __name__ == '__main__':
-    app.debug = True  # 本番環境ではコメントアウトする
+    # app.debug = True  # 本番環境ではコメントアウトする
     app.run(host='0.0.0.0')
