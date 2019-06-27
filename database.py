@@ -1,7 +1,7 @@
 from sqlalchemy import create_engine, Column, Integer, String
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
-import crypto
+import mycrypto
 
 # user = "flask"
 # passwd = "password"
@@ -33,7 +33,7 @@ class DBController:
             if not self.is_existed_user(mail):
                 if name is None:
                     name = "名無し"
-                password = crypto.encrypto(password)
+                password = mycrypto.encrypto(password)
                 user = User(name=name, mail=mail, password=password)
                 self.sess.add(user)
                 self.sess.commit()
@@ -54,7 +54,7 @@ class DBController:
         if "mail" in kwargs.keys():
             user.mail = kwargs["mail"]
         if "password" in kwargs.keys():
-            user.password = crypto.encrypto(kwargs["password"])
+            user.password = mycrypto.encrypto(kwargs["password"])
         self.sess.add(user)
         self.sess.commit()
 
@@ -89,7 +89,7 @@ class DBController:
     def auth(self, mail, password):
         if self.is_existed_user(mail):
             cipher_pass = self.get_value(mail, key="password")
-            decrypted_pass = crypto.decrypto(cipher_pass)
+            decrypted_pass = mycrypto.decrypto(cipher_pass)
             if password == decrypted_pass:
                 return True
         return False
