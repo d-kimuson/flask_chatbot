@@ -1,7 +1,6 @@
 from Crypto.Cipher import AES
 import random
 import string
-import codecs
 
 key = "ZpI6O2g7p8gbqLIf"
 mode = AES.MODE_CBC
