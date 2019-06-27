@@ -1,5 +1,6 @@
 from flask import Flask, render_template, request, redirect, url_for, session
 import numpy as np
+import database as db
 
 
 def rundom_message():
@@ -13,21 +14,28 @@ def rundom_message():
 
 app = Flask(__name__)
 app.secret_key = 'hoigeowooa'
+db_controller = db.DBController()
+
+"""
+session['state']
+- user
+- visitor
+- login_failed
+"""
 
 
 @app.route('/')
 def index():
     title = "ようこそ"
-    message = "名前を入力してね"
-    return render_template("index.html",
-                           message=message,
-                           title=title)
+    if 'state' not in session.keys():
+        update_state(session, is_login=False)
+    return render_template("index.html", title=title)
 
 
-@app.route('/post', methods=['GET', 'POST'])
-def post():
+@app.route('/go_chat', methods=['GET', 'POST'])
+def go_chat():
     if request.method == 'POST':
-        name = request.form['name']
+        name = session['name']
         if name == "":
             name = "名無し"
         session['name'] = name
@@ -36,6 +44,20 @@ def post():
             {"author": "Koshikawa", "content": "僕の名前はこしかわだよ!"},
         ]
         return redirect(url_for('chat'))
+    else:
+        return redirect(url_for('index'))
+
+
+@app.route('/change_name', methods=['GET', 'POST'])
+def change_name():
+    if request.method == 'POST':
+        name = request.form['name']
+        session['name'] = name
+        db_controller.update_user(
+            session['mail'],
+            name=session['name']
+            )
+        return redirect(url_for('index'))
     else:
         return redirect(url_for('index'))
 
@@ -69,6 +91,67 @@ def message_post():
         return redirect(url_for('index'))
 
 
+@app.route('/make_account/')
+def make_account():
+    title = "アカウント登録"
+    return render_template(f"make_account.html", title=title)
+
+
+@app.route('/make', methods=['GET', 'POST'])
+def make():
+    if request.method == 'POST':
+        mail = request.form['mail']
+        passwd = request.form['passwd']
+        result = db_controller.add_user(mail=mail, password=passwd)
+        if result:
+            update_state(session, is_login=True, mail=mail)
+        return redirect(url_for('index'))
+    else:
+        return redirect(url_for('index'))
+
+
+@app.route('/login_page/')
+def login_page():
+    title = "ログイン"
+    return render_template(f"login.html", title=title)
+
+
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    if request.method == 'POST':
+        mail = request.form['mail']
+        passwd = request.form['passwd']
+        if db_controller.auth(mail, passwd):
+            print("login!!")
+            update_state(session, is_login=True, mail=mail)
+            print(session)
+            return redirect(url_for('index'))
+        else:
+            session['state'] = "login_failed"
+            return redirect(url_for('login_page'))
+    else:
+        return redirect(url_for('index'))
+
+
+@app.route('/logout/')
+def logout():
+    update_state(session, is_login=False)
+    return redirect(url_for('index'))
+
+
+def update_state(session, is_login, mail=None):
+    if 'state' not in session.keys():
+        session['state'] = "visitor"
+    if 'mail' not in session.keys():
+        session['mail'] = None
+    if is_login:
+        session['state'] = "user"
+        session['mail'] = mail
+    else:
+        session['state'] = "visitor"
+        session['mail'] = None
+
+
 if __name__ == '__main__':
-    # app.debug = True  # 本番環境ではコメントアウトする
+    app.debug = True  # 本番環境ではコメントアウトする
     app.run(host='0.0.0.0')
