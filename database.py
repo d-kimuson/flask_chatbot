@@ -1,15 +1,24 @@
 from sqlalchemy import create_engine, Column, Integer, String
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
+import crypto
 
-db_path = "chatbot.db"
+# user = "flask"
+# passwd = "password"
+# server = "127.0.0.1"
+# port = ":5432"
+# db_name = "chatbot"
+# db_path = f"postgresql+psycopg2://{user}:{passwd}@{server}{port}/{db_name}"
+# db_path = "sqlite:///chatbot.db"  # for sqlite3
+db_path = "postgres://utkisbyfmytgcb:baa5fa071a9487227646959de99f8af091d10f1e4c1bcf68e4c20c997975713a@ec2-174-129-226-234.compute-1.amazonaws.com:5432/dfhflv72rrooen"
+
 Base = declarative_base()
 
 
 class DBController:
     def __init__(self):
-        self.url = f"sqlite:///{db_path}"
-        self.engine = create_engine(self.url, echo=False)
+        self.url = db_path
+        self.engine = create_engine(self.url, echo=True)
         self.Base = Base
         self.Base.metadata.create_all(self.engine)
         self.Sess_maker = sessionmaker(bind=self.engine)
@@ -24,6 +33,7 @@ class DBController:
             if not self.is_existed_user(mail):
                 if name is None:
                     name = "名無し"
+                password = crypto.encrypto(password)
                 user = User(name=name, mail=mail, password=password)
                 self.sess.add(user)
                 self.sess.commit()
@@ -44,7 +54,7 @@ class DBController:
         if "mail" in kwargs.keys():
             user.mail = kwargs["mail"]
         if "password" in kwargs.keys():
-            user.password = kwargs["password"]
+            user.password = crypto.encrypto(kwargs["password"])
         self.sess.add(user)
         self.sess.commit()
 
@@ -62,7 +72,6 @@ class DBController:
             return False
         else:
             return True
-        self.sess.commit()
 
     def get_value(self, mail, key):
         user = self.sess.query(User).filter_by(mail=mail).one()
@@ -79,7 +88,9 @@ class DBController:
 
     def auth(self, mail, password):
         if self.is_existed_user(mail):
-            if password == self.get_value(mail, key="password"):
+            cipher_pass = self.get_value(mail, key="password")
+            decrypted_pass = crypto.decrypto(cipher_pass)
+            if password == decrypted_pass:
                 return True
         return False
 

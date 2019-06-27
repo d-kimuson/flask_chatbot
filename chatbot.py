@@ -64,11 +64,14 @@ def change_name():
 
 @app.route('/chat/')
 def chat():
-    title = "Chat"
-    return render_template(f"chat.html",
-                           name=session['name'],
-                           messages=session['message_log'],
-                           title=title)
+    if session['state'] == "user":
+        title = "Chat"
+        return render_template(f"chat.html",
+                               name=session['name'],
+                               messages=session['message_log'],
+                               title=title)
+    else:
+        redirect(url_for('index'))
 
 
 @app.route('/message_post', methods=['GET', 'POST'])
