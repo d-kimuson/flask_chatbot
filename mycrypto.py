@@ -2,9 +2,9 @@ from Crypto.Cipher import AES
 import random
 import string
 
-key = "ZpI6O2g7p8gbqLIf"
+key = ""
 mode = AES.MODE_CBC
-vector = "WXivShkV5U4TZZtL"
+vector = ""
 byte_len = 16
 
 
