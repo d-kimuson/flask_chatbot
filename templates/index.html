@@ -1,9 +1,21 @@
 {% extends "base.html" %}
 {% block content %}
-<p class="nav">{{ message }}</p>
-<form action="/post" method="post" class="form-inline">
+<h2>{{ session['state'] }}</h2>
+{% if session['state'] == "user" %}
+<form action="/change_name" method="post" class="form-inline">
     <label for="name">名前</label>
-    <input type="text" class="form-control" id="name" name="name" placeholder="Name">
-    <button type="submit" class="btn btn-primary">送信する</button>
+    <input type="text" class="form-control" id="name" name="name" placeholder="{{ session['name'] }}">
+    <button type="submit" class="btn btn-primary">変更する</button>
 </form>
+<form action="/go_chat" method="post" class="form-inline">
+    <button type="submit" class="btn btn-primary">越川と会話する</button>
+</form>
+<a class="btn btn-primary" href="logout">ログアウト</a>
+<br>
+{% elif session['state'] == "visitor" %}
+<p>ログイン or アカウント登録してください</p>
+<a href="/login_page/">ログイン</a>
+<br>
+<a href="/make_account/">アカウント登録はこちら</a>
+{% endif %}
 {% endblock %}
